@@ -1,0 +1,23 @@
+{
+  "name": "cruair-pvo-sim",
+  "version": "0.1.0",
+  "description": "cruAIR — инженерный симулятор ПВО vs ракета: 6DOF физика + 3D",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "tsx tests/run.mjs",
+    "test:combat": "tsx tests/combat.mjs",
+    "test:robust": "tsx tests/robust.mjs"
+  },
+  "dependencies": {
+    "three": "^0.170.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.186.0",
+    "tsx": "^4.23.15",
+    "typescript": "^5.6.3",
+    "vite": "^6.0.3"
+  }
+}

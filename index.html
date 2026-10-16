@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cruAIR — Симулятор ПВО 6DOF</title>
+  <link rel="stylesheet" href="/src/styles.css" />
+</head>
+<body>
+  <div id="app">
+    <canvas id="scene"></canvas>
+    <div id="hud-top">
+      <div class="brand">cruAIR <span>ПВО-СИМ 6DOF v0.1</span></div>
+      <div id="hud-stats">—</div>
+      <div class="cam-btns">
+        <button data-cam="orbit" class="active">Орбита</button>
+        <button data-cam="chase">ЗУР</button>
+        <button data-cam="missile">Камера ЗУР</button>
+        <button data-cam="tchase">Цель</button>
+        <button data-cam="tnose">Нос цели</button>
+        <button data-cam="radar">РЛС</button>
+      </div>
+    </div>
+    <div id="left-panel">
+      <h2>Сценарий перехвата</h2>
+      <div class="grid2">
+        <label>Цель
+          <select id="p-target">
+            <option value="ballistic">Баллистика (SRBM)</option>
+            <option value="cruise">Крылатая (дозвук, Н=100м)</option>
+            <option value="weave">Маневр. weave 7g</option>
+            <option value="turn">Отворот 9g</option>
+            <option value="iskander">Искандер (2.1км/с + срывы)</option>
+          </select>
+        </label>
+        <label>Установка ПВО
+          <select id="p-site">
+            <option value="north">Север — дальняя (55G)</option>
+            <option value="north_hot">Север-2 — дальняя+ форс. (55G)</option>
+            <option value="hill">Холм — средняя (35G)</option>
+            <option value="point">Объект — ближняя (22G)</option>
+            <option value="all">Все установки (кооператив)</option>
+          </select>
+        </label>
+      </div>
+      <div class="grid2">
+        <label>Залп, ракет <input id="p-salvo" type="number" value="2" min="1" max="3" step="1"></label>
+        <label>Дострел при промахе <input id="p-reshoot" type="checkbox" checked style="height:20px"></label>
+      </div>
+      <div class="grid2">
+        <label>Дальность цели, км <input id="p-range" type="number" value="20" min="5" max="120" step="1"></label>
+        <label>Высота цели, км <input id="p-alt" type="number" value="6" min="0.05" max="30" step="0.5"></label>
+      </div>
+      <div class="grid2">
+        <label>Скорость цели, м/с <input id="p-tv" type="number" value="700" min="150" max="2200" step="10"></label>
+        <label>Курс на объект ±, град <input id="p-cross" type="number" value="0" min="0" max="40" step="1"></label>
+      </div>
+      <div class="grid2">
+        <label>Закон наведения
+          <select id="p-law"><option value="apn">APN (реком.)</option><option value="pn">PN</option></select>
+        </label>
+        <label>Навигац. константа N <input id="p-nav" type="number" value="4" min="2" max="6" step="0.5"></label>
+      </div>
+      <h2>Цель уклоняется</h2>
+      <div class="grid2">
+        <label>Уклонение <input id="p-evade" type="checkbox" checked style="height:20px"></label>
+        <label>Перегрузка, g <input id="p-evadeg" type="number" value="10" min="3" max="14" step="1"></label>
+      </div>
+      <div class="grid2">
+        <label>Дистанция начала, км <input id="p-evr" type="number" value="9" min="2" max="20" step="1"></label>
+        <label style="justify-content:flex-end"><span class="muted">weave + джинк + отворот от ЗУР</span></label>
+      </div>
+      <div class="btnrow">
+        <button id="btn-launch" class="primary">▶ Бой</button>
+        <button id="btn-reset">Сброс</button>
+      </div>
+      <div class="grid2">
+        <label>Играю за
+          <select id="p-role">
+            <option value="pvo">ПВО (авто-цель)</option>
+            <option value="target">Цель (WASD — я пилот)</option>
+          </select>
+        </label>
+        <label>Скорость
+          <select id="p-speed">
+            <option value="1">x1</option>
+            <option value="2">x2</option>
+            <option value="4">x4</option>
+          </select>
+        </label>
+      </div>
+      <div class="hint" id="role-hint">РЛС обнаруживает цель автоматически. Промах &lt; 12 м = поражение (ОФ БЧ).</div>
+      <div id="engage-log"></div>
+    </div>
+    <div id="right-panel">
+      <h2>Верификация ТТХ (Monte-Carlo)</h2>
+      <p class="muted">Пакет прогонов с дисперсиями: шум ГСН/РЛС, ветер, разброс тяги. Ответ: держит ли заявленное?</p>
+      <div class="grid2">
+        <label>Прогонов <input id="mc-n" type="number" value="200" min="20" max="2000" step="20"></label>
+        <label>Seed <input id="mc-seed" type="number" value="7" step="1"></label>
+      </div>
+      <button id="btn-mc" class="primary">Запустить проверку</button>
+      <div id="mc-out">—</div>
+      <canvas id="mc-hist" width="300" height="140"></canvas>
+      <h2>Телеметрия</h2>
+      <canvas id="chart" width="300" height="160"></canvas>
+      <div class="btnrow"><button id="btn-csv">Скачать CSV</button></div>
+    </div>
+    <div id="toast"></div>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
